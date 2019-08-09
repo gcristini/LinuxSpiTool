@@ -275,13 +275,15 @@ s32	spi_init(u8* spiDevice, ST_SPI_IOC_SETTING_TYPE* st_spiIocSetting)
 		return -1;
 	}
 
-	if (spiSetBitsPerWord(s32_spiFile, st_spiIocSetting->spiBitsPerWord) < 0)
+	/* Use WriteBitsPerWord as default value: it will changed into write and read functions */
+	if (spiSetBitsPerWord(s32_spiFile, st_spiIocSetting->spiWriteBitsPerWord) < 0)
 	{
+		
 		perror("Can't set bits per word");
 		return -1;
 	}
 
-	if (spiGetBitsPerWord(s32_spiFile, st_spiIocSetting->spiBitsPerWord) < 0)
+	if (spiGetBitsPerWord(s32_spiFile, st_spiIocSetting->spiWriteBitsPerWord) < 0)
 	{
 		perror("Can't get write bits per word");
 		return -1;
@@ -299,18 +301,21 @@ s32	spi_init(u8* spiDevice, ST_SPI_IOC_SETTING_TYPE* st_spiIocSetting)
 		return -1;
 	}
 
-	printf(	"\n*** Settings for SPI device: %s ***\n" 															\
-			"Mode %d,\t Speed %dHz,\t %d Bits per word,\t %s\n",												\
-			spiDevice, 																							\
-			st_spiIocSetting->spiMode, st_spiIocSetting->spiMaxSpeedHz,											\
-			st_spiIocSetting->spiBitsPerWord, st_spiIocSetting->spiEndianness ? "Little Endian" : "Big Endian"	);
+	printf(	"\n*** Settings for SPI device: %s ***\n" 																				\
+			"-Write:\t mode %d,\t speed %dHz,\t %d bits per word,\t %s\n" 															\
+			"-Read:\t mode %d,\t speed %dHz,\t %d bits per word,\t %s\n", 															\
+			spiDevice, 																												\
+			st_spiIocSetting->spiMode, st_spiIocSetting->spiMaxSpeedHz,																\
+			st_spiIocSetting->spiWriteBitsPerWord, st_spiIocSetting->spiEndianness ? "Little Endian" : "Big Endian", 				\
+					st_spiIocSetting->spiMode, st_spiIocSetting->spiMaxSpeedHz,														\
+					st_spiIocSetting->spiReadBitsPerWord, st_spiIocSetting->spiEndianness ? "Little Endian" : "Big Endian\n"		);
 
 
 	return s32_spiFile;
 }
 
 /* *********************************************************************************/ /**
-    \fn      ssize_t spi_write(s32 s32_spiFile, u8 *dataToWrite, u8 *numOfBytesToWrite)
+    \fn      ssize_t spi_write(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite, u16 bitsPerWord)
     \brief
     \Scope:  Global
     \par
@@ -321,12 +326,12 @@ s32	spi_init(u8* spiDevice, ST_SPI_IOC_SETTING_TYPE* st_spiIocSetting)
             \arg Created on: July 26.19
             \arg Last Edit:
  */ /* **********************************************************************************/
-ssize_t spi_write(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite)
+ssize_t spi_write(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite, u16 bitsPerWord)
 {
 	ssize_t writeResult;
 
 	/* Set bits per words */
-	spiSetBitsPerWord(s32_spiFile, (*numOfBytesToWrite)*8u);
+	spiSetBitsPerWord(s32_spiFile, bitsPerWord);
 
 	/* Write on SPI Bus */	
 	writeResult = write(s32_spiFile, dataToWrite, *numOfBytesToWrite);
@@ -344,7 +349,7 @@ ssize_t spi_write(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite)
 }
 
 /* *********************************************************************************/ /**
-    \fn      ssize_t spi_read(s32 s32_spiFile, u8 *dataToWrite, u8 *numOfBytesToWrite, u64* dataToRead, u8* numOfBytesToRead)
+    \fn      ssize_t spi_read(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite, u64* dataToRead, u8* numOfBytesToRead, u16 bitsPerWord)
     \brief
     \Scope:  Global
     \par
@@ -355,12 +360,12 @@ ssize_t spi_write(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite)
             \arg Created on: July 26.19
             \arg Last Edit:	Aug 08.19
  */ /* **********************************************************************************/
-ssize_t spi_read(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite, u64* dataToRead, u8* numOfBytesToRead)
+ssize_t spi_read(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite, u64* dataToRead, u8* numOfBytesToRead, u16 bitsPerWord)
 {
 	ssize_t opResult;
 		
 	/* Write on SPI Bus */
-	opResult = spi_write(s32_spiFile, dataToWrite, numOfBytesToWrite);
+	opResult = spi_write(s32_spiFile, dataToWrite, numOfBytesToWrite, bitsPerWord);
 
 	if (opResult == -1)
 	{
@@ -368,8 +373,8 @@ ssize_t spi_read(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite, u64* 
 	}
 	else
 	{
-		/* Set bits per Words */
-		spiSetBitsPerWord(s32_spiFile, (*numOfBytesToRead)*8u);	
+		/* Set bits per Words */		
+		spiSetBitsPerWord(s32_spiFile, bitsPerWord);	
 
 		/* Read on SPI Bus */
 		opResult = read(s32_spiFile, dataToRead, *numOfBytesToRead);

@@ -66,7 +66,8 @@ typedef struct
 {
 	u8 	spiMode;	
 	u8 	spiEndianness;	
-	u16	spiBitsPerWord;
+	u16	spiWriteBitsPerWord;
+	u16	spiReadBitsPerWord;
 	u32 spiMaxSpeedHz;	
 }ST_SPI_IOC_SETTING_TYPE;
 
@@ -75,8 +76,8 @@ typedef struct
 /* ***            Declaration of global functions                     ***/
 /* **********************************************************************/
 s32 	spi_init(u8* spiDevice, ST_SPI_IOC_SETTING_TYPE* st_spiIocSetting);
-ssize_t spi_write(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite);
-ssize_t spi_read(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite, u64* dataToRead, u8* numOfBytesToRead);
+ssize_t spi_write(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite, u16 bitsPerWord);
+ssize_t spi_read(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite, u64* dataToRead, u8* numOfBytesToRead, u16 bitsPerWord);
 void	spi_close(s32 s32_spiFile);
 
 
