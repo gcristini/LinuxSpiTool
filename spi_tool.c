@@ -142,19 +142,15 @@ int main(int argc, char *argv[])
 			st_spiStruct.numOfBytesToWrite		= (u8) 		atoi(argv[4]);	/* Dec */
 			
 			/* Variables Initialization */
-			st_spiIocSetting.write_bitsPerWord 	= (u16)		(st_spiStruct.numOfBytesToWrite*8u);			
-			st_spiIocSetting.write_mode			= (u8)		0u;
-			st_spiIocSetting.write_maxSpeedHz	= (u32)		SPI_SPEED_1MHZ;
-			st_spiIocSetting.write_littleEndian = (u8)		0u;
+			st_spiIocSetting.spiBitsPerWord 	= (u16)		(st_spiStruct.numOfBytesToWrite*8u);			
+			st_spiIocSetting.spiMode			= (u8)		0u;
+			st_spiIocSetting.spiMaxSpeedHz		= (u32)		SPI_SPEED_1MHZ;
+			st_spiIocSetting.spiEndianness		= (u8)		SPI_BIG_ENDIAN;
 			
 			/* If SPI read... */
 			if (!strcmp((const char *)st_spiStruct.rwOp , "r"))
 			{
-				st_spiStruct.numOfBytesToRead 		= (u8)	atoi(argv[5]); /* Dec */
-				st_spiIocSetting.read_bitsPerWord 	= 100u;//(u16)	(st_spiStruct.numOfBytesToRead*8u);
-				st_spiIocSetting.read_mode			= (u8)	0u;
-				st_spiIocSetting.read_maxSpeedHz	= (u32)	SPI_SPEED_1MHZ;
-				st_spiIocSetting.read_littleEndian 	= (u8)	0u;
+				st_spiStruct.numOfBytesToRead 	= (u8)	atoi(argv[5]); /* Dec */				
 
 				/* Go to spi read state */
 				en_spi_operation = SPI_READ;

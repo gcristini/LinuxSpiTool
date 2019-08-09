@@ -39,6 +39,9 @@
 #define SPI_SPEED_10KHZ	10000u
 #define SPI_SPEED_1MHZ 	1000000u
 
+#define SPI_BIG_ENDIAN		0u
+#define SPI_LITTLE_ENDIAN	1u
+
 /* **********************************************************************/
 /* ***                Definition of global types                      ***/
 /* **********************************************************************/
@@ -61,14 +64,10 @@ typedef __s64	s64;
 
 typedef struct
 {
-	u8 	write_mode;
-	u8 	read_mode;
-	u8 	write_littleEndian;
-	u8 	read_littleEndian;
-	u16	write_bitsPerWord;
-	u16	read_bitsPerWord;
-	u32 write_maxSpeedHz;
-	u32 read_maxSpeedHz;
+	u8 	spiMode;	
+	u8 	spiEndianness;	
+	u16	spiBitsPerWord;
+	u32 spiMaxSpeedHz;	
 }ST_SPI_IOC_SETTING_TYPE;
 
 
