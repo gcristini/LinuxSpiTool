@@ -65,8 +65,8 @@ typedef struct
 	u8 	read_mode;
 	u8 	write_littleEndian;
 	u8 	read_littleEndian;
-	u8 	write_bitsPerWord;
-	u8 	read_bitsPerWord;
+	u16	write_bitsPerWord;
+	u16	read_bitsPerWord;
 	u32 write_maxSpeedHz;
 	u32 read_maxSpeedHz;
 }ST_SPI_IOC_SETTING_TYPE;

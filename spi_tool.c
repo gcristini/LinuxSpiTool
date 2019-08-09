@@ -102,8 +102,7 @@ int main(int argc, char *argv[])
 	ST_SPI_STRUCT_TYPE 		st_spiStruct;
 	s32 					s32_spiFile;
 	ST_SPI_IOC_SETTING_TYPE	st_spiIocSetting;
-	u8 						nBytes;
-
+	
 	/* Main Program */	
 	for ever
 	{
@@ -143,7 +142,7 @@ int main(int argc, char *argv[])
 			st_spiStruct.numOfBytesToWrite		= (u8) 		atoi(argv[4]);	/* Dec */
 			
 			/* Variables Initialization */
-			st_spiIocSetting.write_bitsPerWord 	= (u8)		(st_spiStruct.numOfBytesToWrite*8u);			
+			st_spiIocSetting.write_bitsPerWord 	= (u16)		(st_spiStruct.numOfBytesToWrite*8u);			
 			st_spiIocSetting.write_mode			= (u8)		0u;
 			st_spiIocSetting.write_maxSpeedHz	= (u32)		SPI_SPEED_1MHZ;
 			st_spiIocSetting.write_littleEndian = (u8)		0u;
@@ -152,7 +151,7 @@ int main(int argc, char *argv[])
 			if (!strcmp((const char *)st_spiStruct.rwOp , "r"))
 			{
 				st_spiStruct.numOfBytesToRead 		= (u8)	atoi(argv[5]); /* Dec */
-				st_spiIocSetting.read_bitsPerWord 	= (u8)	(st_spiStruct.numOfBytesToRead*8u);
+				st_spiIocSetting.read_bitsPerWord 	= 100u;//(u16)	(st_spiStruct.numOfBytesToRead*8u);
 				st_spiIocSetting.read_mode			= (u8)	0u;
 				st_spiIocSetting.read_maxSpeedHz	= (u32)	SPI_SPEED_1MHZ;
 				st_spiIocSetting.read_littleEndian 	= (u8)	0u;
@@ -174,9 +173,9 @@ int main(int argc, char *argv[])
 		case SPI_WRITE:
 
 			/* SPI Write */
-			nBytes = spi_write(s32_spiFile, &st_spiStruct.dataToWrite, &st_spiStruct.numOfBytesToWrite);
+			spi_write(s32_spiFile, &st_spiStruct.dataToWrite, &st_spiStruct.numOfBytesToWrite);
 
-			printf("--> Written %x (%d bytes) on bus %s\n", st_spiStruct.dataToWrite, nBytes, st_spiStruct.spiDevice);
+			printf("--> Written 0x%x (%d bytes) on bus %s\n", st_spiStruct.dataToWrite, st_spiStruct.numOfBytesToWrite, st_spiStruct.spiDevice);
 
 			/* Go to spi close state */
 			en_spi_operation = SPI_CLOSE;
@@ -186,7 +185,7 @@ int main(int argc, char *argv[])
 		case SPI_READ:
 
 			/* SPI Read */
-			nBytes = (u8)spi_read(s32_spiFile, &st_spiStruct.dataToWrite, &st_spiStruct.numOfBytesToWrite, &st_spiStruct.dataToRead, &st_spiStruct.numOfBytesToRead);			
+			spi_read(s32_spiFile, &st_spiStruct.dataToWrite, &st_spiStruct.numOfBytesToWrite, &st_spiStruct.dataToRead, &st_spiStruct.numOfBytesToRead);			
 			
 			if (st_spiStruct.dataToRead == 0u)
 			{
@@ -194,7 +193,7 @@ int main(int argc, char *argv[])
 			}
 			else 
 			{
-				printf("--> Read 0x%x (%d bytes) on bus %s\n", st_spiStruct.dataToRead, nBytes, st_spiStruct.spiDevice);
+				printf("--> Read 0x%x (%d bytes) on bus %s\n", st_spiStruct.dataToRead, st_spiStruct.numOfBytesToRead, st_spiStruct.spiDevice);
 			}
 
 			/* Go to spi close state */

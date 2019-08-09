@@ -96,13 +96,13 @@ s32	spi_init(u8* spiDevice, ST_SPI_IOC_SETTING_TYPE* st_spiIocSetting)
 
 	if (ioctl(s32_spiFile, SPI_IOC_WR_BITS_PER_WORD, &st_spiIocSetting->write_bitsPerWord) < 0)
 	{
-		perror("Can't set bits per word");
+		perror("Can't set write bits per word");
 		return -1;
 	}
 
 	if (ioctl(s32_spiFile, SPI_IOC_RD_BITS_PER_WORD, &st_spiIocSetting->read_bitsPerWord) < 0)
 	{
-		perror("SPI bits_per_word");
+		perror("Can't set read bits per word");
 		return -1;
 	}
 
@@ -149,14 +149,14 @@ ssize_t spi_write(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite)
 
 	/* Write on SPI Bus */	
 	writeResult = write(s32_spiFile, dataToWrite, *numOfBytesToWrite);
-
+	
 	if (writeResult == -1)
 	{
 		perror("Write Error");
 	}
 	else
 	{
-		/* Misra */
+		*numOfBytesToWrite = writeResult;
 	}
 
 	return writeResult;
@@ -178,9 +178,6 @@ ssize_t spi_read(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite, u64* 
 {
 	ssize_t opResult;
 		
-	/* Convert data from string to decimal */
-	//u8  u8_numOfBytesToRead = (u8)strtol((const char*)numOfBytesToRead, NULL, 10);
-
 	/* Write on SPI Bus */
 	opResult = spi_write(s32_spiFile, dataToWrite, numOfBytesToWrite);
 
@@ -198,8 +195,8 @@ ssize_t spi_read(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite, u64* 
 			perror("Read Error");
 		}
 		else
-		{			
-			/* Misra */
+		{
+			*numOfBytesToRead = opResult;
 		}		
 	}
 	
