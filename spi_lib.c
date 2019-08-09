@@ -143,16 +143,14 @@ s32	spi_init(u8* spiDevice, ST_SPI_IOC_SETTING_TYPE* st_spiIocSetting)
             \arg Created on: July 26.19
             \arg Last Edit:
  */ /* **********************************************************************************/
-ssize_t spi_write(s32 s32_spiFile, u8 *dataToWrite, u8 *numOfBytesToWrite)
+ssize_t spi_write(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite)
 {
 	ssize_t writeResult;
 
-	/* Convert data from string to hexadecimal  */
-	u32 u32_dataToWrite 		= (u32)strtol((const char*)dataToWrite, NULL, 16);
 	u8  u8_numOfBytesToWrite 	= (u8)strtol((const char*)numOfBytesToWrite, NULL, 10);
 
 	/* Write on SPI Bus */
-	writeResult = write(s32_spiFile, &u32_dataToWrite, u8_numOfBytesToWrite);
+	writeResult = write(s32_spiFile, dataToWrite, u8_numOfBytesToWrite);
 
 	if (writeResult == -1)
 	{
@@ -178,7 +176,7 @@ ssize_t spi_write(s32 s32_spiFile, u8 *dataToWrite, u8 *numOfBytesToWrite)
             \arg Created on: July 26.19
             \arg Last Edit:	Aug 08.19
  */ /* **********************************************************************************/
-ssize_t spi_read(s32 s32_spiFile, u8 *dataToWrite, u8 *numOfBytesToWrite, u64* dataToRead, u8* numOfBytesToRead)
+ssize_t spi_read(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite, u64* dataToRead, u8* numOfBytesToRead)
 {
 	ssize_t opResult;
 		

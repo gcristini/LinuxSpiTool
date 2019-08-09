@@ -45,7 +45,7 @@ typedef struct
 {
 	u8*		spiDevice;			//SPI device path
 	u8*		rwOp;				//Read/write operation
-	u8*		dataToWrite;		//Data To Write
+	u64		dataToWrite;		//Data To Write
 	u64		dataToRead;			//Data To Read (is not an input argument)
 	u8* 	numOfBytesToWrite;	//Number of bytes to write
 	u8*	 	numOfBytesToRead;	//Number of bytes to read
@@ -137,11 +137,13 @@ int main(int argc, char *argv[])
 
 			/* Read Input Parameters */
 			st_spiStruct.spiDevice 				= (u8*)		argv[1];
-			st_spiStruct.rwOp					= (u8*)		argv[2];
-			st_spiStruct.dataToWrite			= (u8*)		argv[3];
+			st_spiStruct.rwOp					= (u8*)		argv[2];			
+			st_spiStruct.dataToWrite			= (u64)		strtol((const char*)argv[3], NULL, 16); /* Hex */
+			printf("\n\n%x\n\n", st_spiStruct.dataToWrite);
+
 			st_spiStruct.dataToRead				= (u64)		0u;
 			st_spiStruct.numOfBytesToWrite		= (u8*) 	argv[4];
-
+			
 			/* Variables Initialization */
 			st_spiIocSetting.write_bitsPerWord 	= (u8)		(atoi(st_spiStruct.numOfBytesToWrite)*8u);
 			st_spiIocSetting.write_mode			= (u8)		0u;
@@ -174,9 +176,9 @@ int main(int argc, char *argv[])
 		case SPI_WRITE:
 
 			/* SPI Write */
-			nBytes = spi_write(s32_spiFile, st_spiStruct.dataToWrite, st_spiStruct.numOfBytesToWrite);
+			nBytes = spi_write(s32_spiFile, &st_spiStruct.dataToWrite, st_spiStruct.numOfBytesToWrite);
 
-			printf("--> Written %s (%d bytes) on bus %s\n", st_spiStruct.dataToWrite, nBytes, st_spiStruct.spiDevice);
+			printf("--> Written %x (%d bytes) on bus %s\n", st_spiStruct.dataToWrite, nBytes, st_spiStruct.spiDevice);
 
 			/* Go to spi close state */
 			en_spi_operation = SPI_CLOSE;
@@ -186,7 +188,7 @@ int main(int argc, char *argv[])
 		case SPI_READ:
 
 			/* SPI Read */
-			nBytes = (u8)spi_read(s32_spiFile, st_spiStruct.dataToWrite, st_spiStruct.numOfBytesToWrite, &st_spiStruct.dataToRead, st_spiStruct.numOfBytesToRead);			
+			nBytes = (u8)spi_read(s32_spiFile, &st_spiStruct.dataToWrite, st_spiStruct.numOfBytesToWrite, &st_spiStruct.dataToRead, st_spiStruct.numOfBytesToRead);			
 			
 			if (st_spiStruct.dataToRead == 0u)
 			{
