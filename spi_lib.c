@@ -147,10 +147,8 @@ ssize_t spi_write(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite)
 {
 	ssize_t writeResult;
 
-	u8  u8_numOfBytesToWrite 	= (u8)strtol((const char*)numOfBytesToWrite, NULL, 10);
-
-	/* Write on SPI Bus */
-	writeResult = write(s32_spiFile, dataToWrite, u8_numOfBytesToWrite);
+	/* Write on SPI Bus */	
+	writeResult = write(s32_spiFile, dataToWrite, *numOfBytesToWrite);
 
 	if (writeResult == -1)
 	{
@@ -181,7 +179,7 @@ ssize_t spi_read(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite, u64* 
 	ssize_t opResult;
 		
 	/* Convert data from string to decimal */
-	u8  u8_numOfBytesToRead = (u8)strtol((const char*)numOfBytesToRead, NULL, 10);
+	//u8  u8_numOfBytesToRead = (u8)strtol((const char*)numOfBytesToRead, NULL, 10);
 
 	/* Write on SPI Bus */
 	opResult = spi_write(s32_spiFile, dataToWrite, numOfBytesToWrite);
@@ -193,7 +191,7 @@ ssize_t spi_read(s32 s32_spiFile, u64 *dataToWrite, u8 *numOfBytesToWrite, u64* 
 	else
 	{
 		/* Read on SPI Bus */				
-		opResult = read(s32_spiFile, dataToRead, u8_numOfBytesToRead);
+		opResult = read(s32_spiFile, dataToRead, *numOfBytesToRead);
 		
 		if (opResult == -1)
 		{
