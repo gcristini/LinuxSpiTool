@@ -92,8 +92,8 @@ void showUsage(void)
 	printf("-The number of bytes to write should be more or less than the number of bytes to read\n");
 	printf("-Number of bytes should be even\n\n");
 	printf("--Example:\n");
-	printf("-Write:\t spi_tool w 0x55 1\n");
-	printf("-Read:\t spi_tool r 0x55 2 2\n");
+	printf("-Write:\t spi_tool /dev/spidev0.0 w 0x55 1\n");
+	printf("-Read:\t spi_tool /dev/spidev0.0 r 0x55 2 2\n");
 
 	return;
 }
